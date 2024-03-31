@@ -1,4 +1,6 @@
 const { pool } = require("../db/postgres");
+
+// Check if room already exist
 const roomAlreadyExist = async (name) => {
   try {
     const result = await pool.query("SELECT * FROM rooms WHERE name = $1", [
@@ -11,6 +13,7 @@ const roomAlreadyExist = async (name) => {
   }
 };
 
+// Add room to database
 const createRoom = async ({ name, creator_id }) => {
   try {
     const result = await pool.query(
@@ -25,6 +28,7 @@ const createRoom = async ({ name, creator_id }) => {
   }
 };
 
+// Get all rooms
 const getAllRooms = async () => {
   try {
     const result = await pool.query("SELECT * FROM rooms");
@@ -35,6 +39,7 @@ const getAllRooms = async () => {
   }
 };
 
+// Get room name by id
 const getRoomNameById = async (id) => {
   try {
     const result = await pool.query("SELECT name FROM rooms WHERE id = $1", [

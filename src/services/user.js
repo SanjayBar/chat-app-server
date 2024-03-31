@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { pool } = require("../db/postgres");
+
+// Check if user already exist
 const userAlreadyExist = async (name) => {
   try {
     const result = await pool.query("SELECT * FROM users WHERE name = $1", [
@@ -13,6 +15,7 @@ const userAlreadyExist = async (name) => {
   }
 };
 
+// Add user to database
 const createUser = async ({ name, password }) => {
   try {
     const hashPassword = await bcrypt.hash(password, 10);
@@ -29,6 +32,7 @@ const createUser = async ({ name, password }) => {
   }
 };
 
+// Check credentials and return user
 const checkCredentials = async ({ name, password }) => {
   try {
     const user = await pool.query("SELECT * FROM users WHERE name = $1", [

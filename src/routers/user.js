@@ -7,6 +7,7 @@ const {
   generateJwtToken,
 } = require("../services/user");
 
+// create user
 router.post("/users/register", async (req, res) => {
   try {
     const { name, password } = req.body;
@@ -27,6 +28,7 @@ router.post("/users/register", async (req, res) => {
   }
 });
 
+// login
 router.post("/users/login", async (req, res) => {
   try {
     const { name, password } = req.body;

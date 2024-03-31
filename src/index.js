@@ -19,13 +19,16 @@ const port = process.env.PORT;
 const userRouter = require("./routers/user");
 const roomRouter = require("./routers/room");
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// Middlewares
+app.use(cors()); // Enable cores
+app.use(express.json()); // Enable json
+app.use(express.urlencoded({ extended: false })); // Enable urlencoded
 
-app.use(userRouter);
-app.use(roomRouter);
+// Routes
+app.use(userRouter); // user routes
+app.use(roomRouter); // room routes
 
+// Socket middleware to check authentication
 io.use((socket, next) => {
   const token = socket.handshake.headers.authorization;
   if (!token) {
@@ -41,8 +44,9 @@ io.on("connection", (socket) => {
   try {
     const username = socket?.username;
 
+    // Join room
     socket.on("join", async (room, callback) => {
-      const roomName = await getRoomNameById(room);
+      const roomName = await getRoomNameById(room); // get room name by room id
 
       if (!roomName) {
         return callback(error);
@@ -50,11 +54,14 @@ io.on("connection", (socket) => {
 
       const { error, user } = addUser({ id: socket.id, room, username });
       if (error) {
+        // return error if unable to add user
         return callback(error);
       }
 
       socket.join(room);
+      // Welcome current user
       socket.emit("message", generateMessage("Admin", "Welcome"));
+      // Broadcast when a user connects
       socket.broadcast
         .to(room)
         .emit(
@@ -66,8 +73,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on("sendMessage", (message) => {
+      // Find user
       const user = getUser(socket.id);
       if (user) {
+        // Send message to room
         io.to(user.room).emit(
           "message",
           generateMessage(user.username, message),
@@ -76,8 +85,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
+      // remove user
       const user = removeUser(socket.id);
       if (user) {
+        // Broadcast when a user disconnects
         io.to(user.room).emit(
           "message",
           generateMessage("Admin", `${user.username} has left!`),

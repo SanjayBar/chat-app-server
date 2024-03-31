@@ -7,6 +7,7 @@ const {
 } = require("../services/room");
 const router = new express.Router();
 
+// get all rooms
 router.get("/rooms", authMiddleware, async (req, res) => {
   try {
     const room = await getAllRooms();
@@ -17,6 +18,7 @@ router.get("/rooms", authMiddleware, async (req, res) => {
   }
 });
 
+// create room
 router.post("/rooms", authMiddleware, async (req, res) => {
   try {
     const { name } = req.body;

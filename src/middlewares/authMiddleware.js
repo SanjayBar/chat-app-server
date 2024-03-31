@@ -1,6 +1,7 @@
 const { verifyJwtToken } = require("../services/user");
 const { pool } = require("../db/postgres");
 
+// validating token and authorizing user
 const authMiddleware = async (req, res, next) => {
   const token = req.header("Authorization");
   if (!token) {

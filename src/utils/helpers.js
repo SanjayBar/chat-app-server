@@ -1,3 +1,4 @@
+// function to generate message
 const generateMessage = (username, text) => {
   return {
     username,
