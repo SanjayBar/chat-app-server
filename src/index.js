@@ -13,7 +13,12 @@ const io = new Server(httpServer, {
 const { generateMessage } = require("./utils/helpers");
 const { verifyJwtToken } = require("./services/user");
 const { getRoomNameById } = require("./services/room");
-const { addUser, removeUser, getUser } = require("./services/roomUsers");
+const {
+  addUser,
+  removeUser,
+  getUser,
+  getUsersInRoom,
+} = require("./services/roomUsers");
 
 const port = process.env.PORT;
 const userRouter = require("./routers/user");
@@ -68,6 +73,11 @@ io.on("connection", (socket) => {
           "message",
           generateMessage("Admin", `${user.username} has joined`),
         );
+      // Send users and room info
+      io.to(user.room).emit("roomData", {
+        room: user.room,
+        users: getUsersInRoom(user.room),
+      });
 
       callback();
     });
@@ -93,6 +103,11 @@ io.on("connection", (socket) => {
           "message",
           generateMessage("Admin", `${user.username} has left!`),
         );
+        // Send users and room info
+        io.to(user.room).emit("roomData", {
+          room: user.room,
+          users: getUsersInRoom(user.room),
+        });
       }
     });
   } catch (error) {
